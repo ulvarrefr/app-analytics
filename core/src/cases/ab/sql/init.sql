@@ -1,3 +1,4 @@
+-- Create application tables if not exists.
 -- groups
 CREATE TABLE IF NOT EXISTS `groups` (id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT, name VARCHAR(127) CHARACTER SET utf8 NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(`id`));
 -- users
