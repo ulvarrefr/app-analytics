@@ -1,11 +1,14 @@
 const net = require('node:net');
 const { log, response } = require("./lib/core.js");
 // load ab test module routes
-const { routes } = require("./cases/ab/index.js");
+const { routes, init } = require("./cases/ab/index.js");
 
 require("dotenv").config(); // load env variables from .env
 
 const router = { ...routes };
+const inits = [ init ];
+
+inits.forEach( async x => await x() );
 
 const server = net.createServer(c => {
 

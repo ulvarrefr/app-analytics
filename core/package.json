@@ -9,6 +9,7 @@
   "author": "ulvar.refr@disroot.org",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.0.2"
+    "dotenv": "^16.0.2",
+    "mysql": "^2.18.1"
   }
 }
