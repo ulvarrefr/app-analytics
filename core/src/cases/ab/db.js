@@ -45,7 +45,7 @@ async function initSql() {
 async function getUser(uid, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    const res = await query("SELECT id,group_id FROM users WHERE id=?",[conn.escape(parseInt(uid))]);
+    const res = await query("SELECT users.id,users.group_id,groups.name AS group_name FROM users LEFT JOIN groups ON groups.id = users.group_id WHERE users.id=?;",[conn.escape(parseInt(uid))]);
     return res[0];
 }
 
