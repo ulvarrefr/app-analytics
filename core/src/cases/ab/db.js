@@ -45,7 +45,7 @@ async function initSql() {
 async function getUser(uid, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    const res = await query("SELECT id,group_id FROM users WHERE id=?",[conn.escape(uid)]);
+    const res = await query("SELECT id,group_id FROM users WHERE id=?",[conn.escape(parseInt(uid))]);
     return res[0];
 }
 
@@ -62,13 +62,13 @@ async function createUser(_conn) {
 async function createVisit({ id, group_id }, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    await query(`INSERT INTO visit_events (group_id,user_id) VALUES (?,?);`,[conn.escape(group_id), conn.escape(id)]);
+    await query(`INSERT INTO visit_events (group_id,user_id) VALUES (?,?);`,[conn.escape(parseInt(group_id)), conn.escape(parseInt(id))]);
 }
 
 async function createClick({ id, group_id }, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    await query("INSERT INTO click_events (group_id,user_id) VALUES (?,?);",[conn.escape(group_id), conn.escape(id)]);
+    await query("INSERT INTO click_events (group_id,user_id) VALUES (?,?);",[conn.escape(parseInt(group_id)), conn.escape(parseInt(id))]);
 }
 
 module.exports = { connect, initSql, getUser, createUser, createVisit, createClick };
