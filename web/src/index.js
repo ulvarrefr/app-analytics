@@ -20,7 +20,7 @@ async function init() {
           SSL=FALSE
           HTTP mode, no SSL.
         */
-        http.createServer(r).listen(process.env.SERVER_PORT,process.env.SERVER_HOST);
+        http.createServer(r).listen(process.env.SERVER_PORT,process.env.SERVER_HOST);   
     } else if (process.env.SSL === "KEYS") {
         /*
           SSL=KEYS
@@ -37,7 +37,8 @@ async function init() {
     } else {
         /*
           SSL=TRUE or empty SSL environment variable.
-          Use one-time generated self-signed keys.          
+          Use one-time generated self-signed keys.
+          !!! openssl required !!!
         */
         // generate keys
         await promisify(exec)('openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -keyout ssl.key -out ssl.crt -subj "/C=US/ST=.../L=.../O=.../OU=.../CN=.../emailAddress=..."');
@@ -50,6 +51,7 @@ async function init() {
         
         https.createServer(options, r).listen(process.env.SERVER_PORT, process.env.SERVER_HOST);
     }
+    log(`SERVER STARTED ON ${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`);
 }
 
 init();
