@@ -1,6 +1,7 @@
 ## Requirements
 
 The only OS requirement is `openssl`, if you wish to generate self-signed certificates.
+
 Application used new node syntax for `require` function, so you must use at least 18.X node version.
 
 ## Install dependencies
