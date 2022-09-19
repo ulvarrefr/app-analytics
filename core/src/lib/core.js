@@ -1,3 +1,5 @@
+const { encrypt } = require("./crypt.js");
+
 
 function log(str) {
     if (process.env.DEBUG === "TRUE") console.log(`${formatDateTime(new Date())}: ${str}`);
@@ -6,7 +8,10 @@ function log(str) {
 function response(conn, status, data) {
     let msg = `${JSON.stringify({ status, data })}`;    
     try {
-        conn.write(`${msg}\r\n`);
+        // encode message
+        let encoded = encrypt(msg);
+        encoded = JSON.stringify(encoded);
+        conn.write(`${encoded}\r\n`);
         log(`--> ${msg}`);
     } catch (e) {
         log(`WRITE ERROR: ${e.toString()}`);

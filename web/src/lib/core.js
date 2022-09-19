@@ -1,4 +1,5 @@
 const { createConnection } = require("node:net");
+const { decrypt, encrypt } = require("./crypt.js");
 
 function log(str) {
     if (process.env.DEBUG === "TRUE") console.log(`${formatDateTime(new Date())}: ${str}`);
@@ -7,11 +8,21 @@ function log(str) {
 function apiCall(msg) {
     return new Promise((res,rej) => {
         const client = createConnection({ port: process.env.API_PORT, host: process.env.API_HOST }, () => {
-            client.write(`${JSON.stringify(msg)}\r\n`);
+            const encoded = encrypt(JSON.stringify(msg));
+            client.write(`${JSON.stringify(encoded)}\r\n`);
         });
         client.on('data', (apiResp) => {
             client.end();
-            const { status, data } = JSON.parse(apiResp);
+            let raw;
+            // decode message
+            try {
+                raw = JSON.parse(apiResp);
+                raw = decrypt(raw);
+            } catch (e) {
+                log(e.toString());
+                rej("DECODE ERROR");
+            }
+            const { status, data } = JSON.parse(raw);
             if (status === "OK") {
                 res(data);
             } else {

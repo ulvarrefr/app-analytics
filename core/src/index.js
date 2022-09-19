@@ -1,5 +1,6 @@
 const net = require('node:net');
 const { log, response } = require("./lib/core.js");
+const { decrypt } = require("./lib/crypt.js");
 // load ab test module routes
 const { routes, init } = require("./cases/ab/index.js");
 
@@ -21,9 +22,17 @@ const server = net.createServer(c => {
         // cleanup request
         let raw = m.toString().replace(/(\r\n|\n|\r)/gm, "");
         let msg;
-        log(`<-- ${raw}`);
 
-        // decode request maybe?
+        // decode request
+        try {
+            raw = JSON.parse(raw);
+            raw = decrypt(raw);
+        } catch (e) {
+            response(c, "ERROR", "DECODE ERROR");
+            return;
+        }
+
+        log(`<-- ${raw}`);
 
         // parse request
         try {

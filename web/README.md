@@ -32,3 +32,5 @@ Configuration options can be set as environment variables or in .env file.
 
 **SERVER_HOST** Web-server binding host.
 
+**SECRET** Key for simple AES-256 requests and responses encryption. Must have a 32-bits length.
+

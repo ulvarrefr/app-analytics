@@ -1,4 +1,4 @@
-const { response } = require("../../lib/core.js");
+const { response, log } = require("../../lib/core.js");
 const { connect, initSql, getUser, createUser, createVisit, createClick } = require("./db.js");
 
 async function init () {
@@ -21,7 +21,8 @@ const routes = {
                 user = await createUser(conn);
             }
             await createVisit(user, conn);
-            response(sock, "OK", { uid: user.id, group: user.group_name });
+            const resp = data?.uid ? {} : { uid: user.id, group: user.group_name };
+            response(sock, "OK", resp);
         } catch (e) {
             log(e.toString());
             response(sock, "ERROR", "Internal server error");

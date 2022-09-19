@@ -22,9 +22,11 @@ Configuration options can be set as environment variables or in .env file.
 
 **DEBUG** Set in TRUE if you want debug output.
 
-**MAX_REQ_SIZE**=Maximum request size.
+**MAX_REQ_SIZE** Maximum request size.
 
 **MYSQL_HOST**, **MYSQL_PORT**, **MYSQL_USER**, **MYSQL_PASS**, **MYSQL_DB** MySQL connection parameters.
+
+**SECRET** Key for simple AES-256 requests and responses encryption. Must have a 32-bits length.
 
 ## API
 
