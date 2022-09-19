@@ -46,9 +46,7 @@ async function response(tpl,req,res) {
                     user = await apiCall(msg);
                     // setup cookie if unexist
                     if (!cookie.uid) {
-                        mkCookie(user).forEach(x => {
-                            res.setHeader('Set-Cookie', x);
-                        });
+                        res.setHeader("Set-Cookie", mkCookie(user));
                     }
                     res.setHeader('Content-Type', 'text/html');
                     // fill template with cookie value (new user) or returned value (user exists)
@@ -100,11 +98,8 @@ function processTpl(tpl,user) {
 }
 
 function mkCookie({ uid, group, redirect }) {
-    const cookie = [];
     const maxAge = 60*60*24*30*12; // one year
-    cookie.push(`uid=${uid};Max-Age=${maxAge}`);
-    cookie.push(`group_name=${group};Max-Age=${maxAge}`);
-    return cookie;
+    return `uid=${uid}__${group};Max-Age=${maxAge};`;
 }
 
 function parseCookie(headers) {
@@ -112,8 +107,12 @@ function parseCookie(headers) {
     if (headers.cookie) {
         headers.cookie.split("; ").forEach(x => {
             res = x.split("=");
-            if (res.length > 0 && res[0] === "uid") uid = res[1];
-            if (res.length > 0 && res[0] === "group_name") group = res[1];
+            if (res.length > 0 && res[0] === "uid") {
+                const line = res[1].split("__");
+                uid = line[0];
+                group = line[1];
+            }
+            //if (res.length > 0 && res[0] === "group_name") group = res[1];
             if (res.length > 0 && res[0] === "redirect") redirect = res[1];
         });
     }
