@@ -10,9 +10,9 @@
 
 `cd app-analytics`
 
-`docker build -t app_analytics_core ./core/`
+`docker build -t app-analytics-core ./core/`
 
-`docker build -t app_analytics_core ./web/`
+`docker build -t app-analytics-web ./web/`
 
 `docker-compose up`
 
