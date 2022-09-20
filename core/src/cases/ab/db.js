@@ -45,30 +45,32 @@ async function initSql() {
 async function getUser(uid, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    const res = await query("SELECT users.id,users.group_id,groups.name AS group_name FROM users LEFT JOIN groups ON groups.id = users.group_id WHERE users.id=?;",[conn.escape(parseInt(uid))]);
+    const res = await query("SELECT users.id,users.group_id,groups.name AS group_name FROM `users` LEFT JOIN `groups` ON groups.id = users.group_id WHERE users.id=?;",[conn.escape(parseInt(uid))]);
     return res[0];
 }
 
 async function createUser(_conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    // find a group with minimum users
-    const res = await query("SELECT t.id,t.name,MIN(t.total) AS result FROM (SELECT groups.id,groups.name,COUNT(users.group_id) AS total FROM groups LEFT JOIN users ON groups.id=users.group_id GROUP BY users.group_id) t GROUP BY t.id ORDER BY result asc LIMIT 1;");
+    // hack for docker environment
+    await query("SET LOCAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+    // find a group with minimum users    
+    const res = await query("SELECT t.id,t.name,MIN(t.total) AS result FROM (SELECT groups.id,groups.name,COUNT(users.group_id) AS total FROM `groups` LEFT JOIN `users` ON groups.id=users.group_id GROUP BY users.group_id) t GROUP BY t.id ORDER BY result asc LIMIT 1;");
     // write user
-    const res1 = await query(`INSERT INTO users (group_id) VALUES (${res[0].id});`);
+    const res1 = await query("INSERT INTO `users` (group_id) VALUES (?);",[res[0].id]);
     return { group_id: res[0].id, group_name: res[0].name, id: res1.insertId };
 }
 
 async function createVisit({ id, group_id }, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    await query(`INSERT INTO visit_events (group_id,user_id) VALUES (?,?);`,[conn.escape(parseInt(group_id)), conn.escape(parseInt(id))]);
+    await query("INSERT INTO `visit_events` (group_id,user_id) VALUES (?,?);",[conn.escape(parseInt(group_id)), conn.escape(parseInt(id))]);
 }
 
 async function createClick({ id, group_id }, _conn) {
     const conn = _conn || connect();
     const query = promisify(conn.query).bind(conn);
-    await query("INSERT INTO click_events (group_id,user_id) VALUES (?,?);",[conn.escape(parseInt(group_id)), conn.escape(parseInt(id))]);
+    await query("INSERT INTO `click_events` (group_id,user_id) VALUES (?,?);",[conn.escape(parseInt(group_id)), conn.escape(parseInt(id))]);
 }
 
 module.exports = { connect, initSql, getUser, createUser, createVisit, createClick };
