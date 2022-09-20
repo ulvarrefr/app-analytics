@@ -21,7 +21,7 @@ services:
   web:
     image: "app-analytics-web"
     environment:
-      SSL: "TRUE"
+      SSL: "FALSE"
       SERVER_HOST: "0.0.0.0"
       API_HOST: "api"
     ports:
